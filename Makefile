@@ -1,6 +1,6 @@
 all: help
 
-BINARY_NAME = ntdbg
+BINARY_NAME = netdbg
 BIN_FOLDER := bin/
 GO_LDFLAGS = -ldflags "-s -w"
 

@@ -10,8 +10,8 @@ var netcatCmd = &cobra.Command{
 	Use:   "nc",
 	Short: "Minimal netcat tool",
 	Long: `
-Connect to somewhere:  ntdbg nc -a [hostname] -p [port]
-Listen for inbound:    ntdbg nc -l -a [hostname] -p [port]
+Connect to somewhere:  netdbg nc -a [hostname] -p [port]
+Listen for inbound:    netdbg nc -l -a [hostname] -p [port]
 	`,
 	Run: func(cmd *cobra.Command, args []string) {
 		listen, _ := cmd.Flags().GetBool("listen")
@@ -41,4 +41,6 @@ func init() {
 	netcatCmd.Flags().StringP("address", "a", "localhost", "hostname to connect (client)")
 	netcatCmd.Flags().IntP("port", "p", 5000, "port to connect (client) or bind (server)")
 	netcatCmd.Flags().BoolP("zero", "z", false, "zero-I/O mode (used for scanning)")
+	netcatCmd.MarkFlagRequired("address")
+	netcatCmd.MarkFlagRequired("port")
 }

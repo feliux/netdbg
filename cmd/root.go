@@ -8,7 +8,7 @@ import (
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
-	Use:   "ntdbg",
+	Use:   "netdbg",
 	Short: "Net debugger cli",
 	Long:  `Set of tools for testing and debugging connectivity.`,
 	// Uncomment the following line if your bare application
