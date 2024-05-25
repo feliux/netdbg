@@ -1,14 +1,16 @@
+// Package netcat server.go builds a TCP server.
 package netcat
 
 import (
 	"fmt"
 	"io"
 	"log"
+	"log/slog"
 	"net"
 	"os"
 )
 
-// Start a TCP server for listening connections
+// StartServer starts a TCP server for listening connections.
 func StartServer(addr string, port int) {
 	hostPort := fmt.Sprintf("%s:%d", addr, port)
 	listener, err := net.Listen("tcp", hostPort)
@@ -26,11 +28,14 @@ func StartServer(addr string, port int) {
 	}
 }
 
-// Process data sent by client
+// Process data sent by client.
 func processClient(conn net.Conn) {
 	_, err := io.Copy(os.Stdout, conn)
 	if err != nil {
 		fmt.Println(err)
 	}
-	conn.Close()
+	err = conn.Close()
+	if err != nil {
+		slog.Error("can not close connection", "err", err)
+	}
 }

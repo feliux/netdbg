@@ -1,23 +1,28 @@
+// Package netcat client.go builds a TCP clients.
 package netcat
 
 import (
 	"fmt"
 	"io"
-	"log"
+	"log/slog"
 	"net"
 	"os"
 )
 
-// Start a TCP client. Include zero mode: https://unix.stackexchange.com/questions/589561/what-is-nc-z-used-for
+// StartClient starts a TCP client. Include zero mode:
+// https://unix.stackexchange.com/questions/589561/what-is-nc-z-used-for
 func StartClient(addr string, port int, zero bool) {
 	hostPort := fmt.Sprintf("%s:%d", addr, port)
 	conn, err := net.Dial("tcp", hostPort)
 	if err != nil {
-		log.Printf("can not connect to server: %s\n", err)
+		slog.Error("can not connect to server", "err", err)
 		return
 	} else if err == nil && zero {
 		fmt.Println("zero mode invoked. Connection established.")
-		conn.Close()
+		err = conn.Close()
+		if err != nil {
+			slog.Error("can not close connection", "err", err)
+		}
 		return
 	}
 	_, err = io.Copy(conn, os.Stdin)

@@ -1,13 +1,15 @@
+// Package cmd revdns.go is a Cobra cli entrypoint for reverse DNS lookups.
 package cmd
 
 import (
+	"log/slog"
 	"os"
 
 	"github.com/feliux/netdbg/revdns"
 	"github.com/spf13/cobra"
 )
 
-// revdnsCmd represents the reverse lookup command
+// revdnsCmd represents the reverse lookup command.
 var revdnsCmd = &cobra.Command{
 	Use:   "revdns",
 	Short: "Reverse DNS lookup",
@@ -18,7 +20,10 @@ Make a reverse DNS lookup:  netdbg revdns -a [ip] -p [port] -r [resolver_ip] -P 
 		addr, _ := cmd.Flags().GetString("address")
 		file, _ := cmd.Flags().GetString("file")
 		if addr == "" && file == "" {
-			cmd.Help()
+			err := cmd.Help()
+			if err != nil {
+				slog.Error("can not execute help command", "err", err)
+			}
 			os.Exit(1)
 		}
 	},
