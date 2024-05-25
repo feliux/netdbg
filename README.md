@@ -1,9 +1,11 @@
 ## Under Construction
 
-<img src="images/netdbg.png"
-     alt="Gopher netdbg"
-	style="float:left; margin-right:10px; width:200px; height:200px;"
-/>
+<p align="center">
+	<img src="images/netdbg.png"
+ 	    alt="Gopher netdbg"
+		style="width:200px; height:200px;"
+	/>
+</p>
 
 Netdbg is a powerfull command line tool for debugging connectivity issues in enviroments where you do not have tools like ping, curl, netcat, dig, nslookp, etc, etc. So netdbg is the swiss knife that brings all of them together in one place.
 
