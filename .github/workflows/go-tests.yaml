@@ -1,0 +1,40 @@
+
+name: go-tests
+run-name: go-tests workflow launched by @${{ github.actor }}
+on:
+  push:
+    branches:
+      - develop
+  pull_request:
+
+jobs:
+  test:
+    name: go-tests
+    runs-on: ubuntu-latest
+    # needs: format-check
+    steps:
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v4
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.22"
+      - name: Run tests and coverage
+        run: make test
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: reports
+          path: reports
+  # format-check:
+  #   name: Check formatting
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Check out code into the Go module directory
+  #       uses: actions/checkout@v4
+  #     - name: Setup Go
+  #       uses: actions/setup-go@v5
+  #       with:
+  #         go-version: "1.22"
+  #   - name: Run format checks
+  #     run: make check-format
