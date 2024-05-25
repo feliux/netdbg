@@ -1,0 +1,8 @@
+version: '3'
+services: 
+  netdbg:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: netdbg:1.0.0
+    command: /netdbg

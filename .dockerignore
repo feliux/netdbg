@@ -1,0 +1,14 @@
+
+.git*
+.golanci.yaml
+
+bin/
+images/
+reports/
+scripts/
+
+docker-compose.yaml
+Dockerfile
+LICENSE
+Makefile
+README.md

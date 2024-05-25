@@ -14,14 +14,15 @@ permissions:
 
 jobs:
   golangci:
-    name: lint
+    name: golangci-lint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out code into the Go module directory
+        uses: actions/checkout@v4
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: '1.22'
+          go-version: "1.22"
       - name: Execute golangci-lint
         # https://github.com/golangci/golangci-lint-action
         uses: golangci/golangci-lint-action@v6
@@ -35,3 +36,4 @@ jobs:
           skip-save-cache: false
           cache-invalidation-interval: 7
           problem-matchers: false
+          # args: --config=.golangci.yaml --issues-exit-code=1
