@@ -1,10 +1,12 @@
 package netcat
 
 import (
+	"context"
 	"fmt"
 	"io"
 	"net"
 	"os"
+	"time"
 
 	"github.com/feliux/netdbg/internal/logger"
 )
@@ -12,7 +14,7 @@ import (
 // Connector is the interface that defines methods for connecting and listening.
 type Connector interface {
 	Connect(address string, port int, zero bool) error
-	Listen(address string, port int) error
+	Listen(ctx context.Context, address string, port int) error
 }
 
 // TCPConnector implements the Connector interface for TCP.
@@ -48,8 +50,8 @@ func (c *TCPConnector) Connect(address string, port int, zero bool) error {
 	return nil
 }
 
-// Listen starts a TCP server to listen for incoming connections.
-func (c *TCPConnector) Listen(address string, port int) error {
+// Listen starts a TCP server to listen for incoming connections, and supports context cancellation.
+func (c *TCPConnector) Listen(ctx context.Context, address string, port int) error {
 	hostPort := fmt.Sprintf("%s:%d", address, port)
 	logger.Info("starting TCP server", "address", address, "port", port)
 
@@ -67,13 +69,26 @@ func (c *TCPConnector) Listen(address string, port int) error {
 
 	logger.Info("tcp server listening", "address", listener.Addr().String())
 	for {
-		conn, err := listener.Accept()
-		if err != nil {
-			logger.Error("error accepting connection", "error", err)
-			continue
+		select {
+		case <-ctx.Done():
+			logger.Info("listener context cancelled, shutting down")
+			return nil
+		default:
+			// Only set deadline if listener is a *net.TCPListener
+			if tcpListener, ok := listener.(*net.TCPListener); ok {
+				tcpListener.SetDeadline(time.Now().Add(200 * time.Millisecond))
+			}
+			conn, err := listener.Accept()
+			if err != nil {
+				if ne, ok := err.(net.Error); ok && ne.Timeout() {
+					continue // check context again
+				}
+				logger.Error("error accepting connection", "error", err)
+				continue
+			}
+			logger.Info("accepted connection", "remote_address", conn.RemoteAddr().String())
+			go processClient(conn)
 		}
-		logger.Info("accepted connection", "remote_address", conn.RemoteAddr().String())
-		go processClient(conn)
 	}
 }
 
@@ -112,7 +127,7 @@ func (c *UDPConnector) Connect(address string, port int, zero bool) error {
 }
 
 // Listen starts a UDP server to listen for incoming connections.
-func (c *UDPConnector) Listen(address string, port int) error {
+func (c *UDPConnector) Listen(ctx context.Context, address string, port int) error {
 	// tbd implement udp logic
 	return nil
 }

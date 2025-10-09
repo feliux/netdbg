@@ -1,21 +1,12 @@
 package netcat
 
 import (
-	"bytes"
+	"context"
 	"fmt"
-	"log/slog"
 	"net"
 	"testing"
 	"time"
-
-	"github.com/feliux/netdbg/internal/logger"
 )
-
-// setupLogger initializes the logger for testing.
-func setupLogger() {
-	var buf bytes.Buffer
-	logger.InitLogger(slog.LevelInfo, &buf, "text") // Pass the buffer as the output
-}
 
 func TestTCPConnector_Connect(t *testing.T) {
 	setupLogger()
@@ -25,19 +16,19 @@ func TestTCPConnector_Connect(t *testing.T) {
 	go func() {
 		listener, err := net.Listen("tcp", fmt.Sprintf("%s:%d", address, port))
 		if err != nil {
-			t.Fatalf("Failed to start mock server: %v", err)
+			t.Fatalf("failed to start mock server: %v", err)
 		}
 		defer listener.Close()
 
 		conn, err := listener.Accept()
 		if err != nil {
-			t.Errorf("Failed to accept connection: %v", err)
+			t.Errorf("failed to accept connection: %v", err)
 			return
 		}
 		defer conn.Close()
 
 		// Simulate server response
-		conn.Write([]byte("Hello, client!"))
+		conn.Write([]byte("hello, client"))
 	}()
 
 	// Wait for the server to start
@@ -58,7 +49,7 @@ func TestTCPConnector_Listen(t *testing.T) {
 	port := 5002
 	connector := &TCPConnector{}
 	go func() {
-		err := connector.Listen(address, port)
+		err := connector.Listen(context.Background(), address, port)
 		if err != nil {
 			t.Errorf("listen failed: %v", err)
 		}
@@ -70,11 +61,11 @@ func TestTCPConnector_Listen(t *testing.T) {
 	// Connect to the server as a client
 	conn, err := net.Dial("tcp", fmt.Sprintf("%s:%d", address, port))
 	if err != nil {
-		t.Fatalf("Failed to connect to server: %v", err)
+		t.Fatalf("failed to connect to server: %v", err)
 	}
 	defer conn.Close()
 
-	message := "Hello, server!"
+	message := "hello, server"
 	_, err = conn.Write([]byte(message))
 	if err != nil {
 		t.Errorf("failed to send data: %v", err)
@@ -100,7 +91,7 @@ func TestUDPConnector_Connect(t *testing.T) {
 		}
 
 		// Simulate server response
-		conn.WriteTo([]byte("Hello, UDP client!"), addr)
+		conn.WriteTo([]byte("hello, udp client"), addr)
 	}()
 
 	// Wait for the server to start
@@ -122,7 +113,7 @@ func TestUDPConnector_Listen(t *testing.T) {
 	port := 5004
 	connector := &UDPConnector{}
 	go func() {
-		err := connector.Listen(address, port)
+		err := connector.Listen(context.Background(), address, port)
 		if err != nil {
 			t.Errorf("listen failed: %v", err)
 		}
