@@ -25,11 +25,11 @@ You must specify the destination address using the -a or --address flag.
 	PreRun: func(cmd *cobra.Command, args []string) {
 		address, _ := cmd.Flags().GetString("address")
 		if address == "" {
-			fmt.Fprintln(os.Stderr, "Error: You must specify the destination address using the -a or --address flag.")
 			err := cmd.Help()
 			if err != nil {
 				logger.Error("can not execute help command", "err", err)
 			}
+			fmt.Fprintln(os.Stderr, "Error: you must specify the destination address using the -a or --address flag.")
 			os.Exit(1)
 		}
 	},
