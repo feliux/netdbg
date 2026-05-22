@@ -2,40 +2,42 @@
 package cmd
 
 import (
-	"log/slog"
+	"fmt"
 	"os"
 
-	"github.com/feliux/netdbg/revdns"
+	"github.com/feliux/netdbg/internal/logger"
+	"github.com/feliux/netdbg/internal/revdns"
+
 	"github.com/spf13/cobra"
 )
 
-// revdnsCmd represents the reverse lookup command.
 var revdnsCmd = &cobra.Command{
 	Use:   "revdns",
 	Short: "Reverse DNS lookup",
-	Long: `
-Make a reverse DNS lookup:  netdbg revdns -a [ip] -p [port] -r [resolver_ip] -P [udp|tcp] -d
-	`,
+	Long: `Reverse DNS lookup tool.
+
+You can perform a reverse DNS lookup for a single IP address or a list of IPs from a file.
+
+Usage examples:
+  netdbg revdns -a <ip> -p <port> -r <resolver_ip> -P <udp|tcp>
+  netdbg revdns -f <file_with_ips> -p <port> -r <resolver_ip> -P <udp|tcp>
+
+You must specify the address using the -a or --address flag, or provide a file with the -f or --file flag.
+`,
 	PreRun: func(cmd *cobra.Command, args []string) {
 		addr, _ := cmd.Flags().GetString("address")
 		file, _ := cmd.Flags().GetString("file")
 		if addr == "" && file == "" {
 			err := cmd.Help()
 			if err != nil {
-				slog.Error("can not execute help command", "err", err)
+				logger.Error("can not execute help command", "err", err)
 			}
+			fmt.Fprintln(os.Stderr, "Error: you must specify either the address with -a/--address or a file with -f/--file.")
 			os.Exit(1)
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		addr, _ := cmd.Flags().GetString("address")
-		resolverIP, _ := cmd.Flags().GetString("resolver")
-		protocol, _ := cmd.Flags().GetString("protocol")
-		file, _ := cmd.Flags().GetString("file")
-		port, _ := cmd.Flags().GetInt("port")
-		threads, _ := cmd.Flags().GetInt("threads")
-		domain, _ := cmd.Flags().GetBool("domain")
-		revdns.RevDNS(addr, resolverIP, protocol, file, port, threads, domain)
+		revdns.ExecuteCommand(cmd, args)
 	},
 }
 
@@ -48,6 +50,5 @@ func init() {
 	revdnsCmd.Flags().IntP("port", "p", 53, "port to bother the specified DNS resolver on")
 	revdnsCmd.Flags().IntP("threads", "t", 5, "threads to use when reversing from file")
 	revdnsCmd.Flags().BoolP("domain", "d", false, "output only domain names")
-	// revdnsCmd.MarkFlagRequired("address")
 
 }

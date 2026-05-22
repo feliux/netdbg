@@ -11,11 +11,8 @@ import (
 // rootCmd represents the base command when called without any subcommands.
 var rootCmd = &cobra.Command{
 	Use:   "netdbg",
-	Short: "Net debugger cli",
-	Long:  `Set of tools for testing and debugging connectivity.`,
-	// Uncomment the following line if your bare application
-	// has an action associated with it:
-	// Run: func(cmd *cobra.Command, args []string) { },
+	Short: "Net debugger CLI",
+	Long:  `Set of tools for testing and debugging connectivity issues.`,
 }
 
 func Execute() {
