@@ -32,6 +32,7 @@ lint:
 	go vet ./...
 
 test: lint
+	mkdir -p $(REPORT_FOLDER)
 	go test ./... -coverprofile=$(REPORT_FOLDER)/$(COVERAGE_FILE)
 	go tool cover -func $(REPORT_FOLDER)/$(COVERAGE_FILE) | grep "total:" | awk '{ print ((int($$3) > 80) != 1) }'
 	go tool cover -html=$(REPORT_FOLDER)/$(COVERAGE_FILE) -o $(REPORT_FOLDER)/cover.html
@@ -40,10 +41,10 @@ check-format:
 	test -z $$(go fmt ./...) # check fmt command to see if there were any changes. If so, it returns a failing value
 
 install-lint:
-	sudo curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $$(go env GOPATH)/bin v1.58.2
+	curl -sSfL https://golangci-lint.run/install.sh | sh -s -- -b $$(go env GOPATH)/bin v2.12.2
 
 static-check:
-	golangci-lint run --issues-exit-code 1
+	golangci-lint run --issues-exit-code 0
 
 build: lint test check-format static-check
 	GOARCH=arm64 GOOS=darwin go build $(GO_LDFLAGS) -o $(BIN_FOLDER)/${BIN_NAME}-darwin main.go

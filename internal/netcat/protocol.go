@@ -6,6 +6,7 @@ import (
 	"io"
 	"net"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/feliux/netdbg/internal/logger"
@@ -22,7 +23,7 @@ type TCPConnector struct{}
 
 // Connect establishes a TCP connection to the server.
 func (c *TCPConnector) Connect(address string, port int, zero bool) error {
-	hostPort := fmt.Sprintf("%s:%d", address, port)
+	hostPort := net.JoinHostPort(address, strconv.Itoa(port))
 	conn, err := net.Dial("tcp", hostPort)
 	if err != nil {
 		return err
@@ -52,7 +53,7 @@ func (c *TCPConnector) Connect(address string, port int, zero bool) error {
 
 // Listen starts a TCP server to listen for incoming connections, and supports context cancellation.
 func (c *TCPConnector) Listen(ctx context.Context, address string, port int) error {
-	hostPort := fmt.Sprintf("%s:%d", address, port)
+	hostPort := net.JoinHostPort(address, strconv.Itoa(port))
 	logger.Info("starting TCP server", "address", address, "port", port)
 
 	listener, err := net.Listen("tcp", hostPort)
@@ -97,7 +98,7 @@ type UDPConnector struct{}
 
 // Connect establishes a UDP connection to the server.
 func (c *UDPConnector) Connect(address string, port int, zero bool) error {
-	hostPort := fmt.Sprintf("%s:%d", address, port)
+	hostPort := net.JoinHostPort(address, strconv.Itoa(port))
 	conn, err := net.Dial("udp", hostPort)
 	if err != nil {
 		logger.Error("failed to connect", "protocol", "udp", "address", address, "port", "error", err)
