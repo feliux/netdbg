@@ -16,13 +16,9 @@ var revdnsCmd = &cobra.Command{
 	Short: "Reverse DNS lookup",
 	Long: `Reverse DNS lookup tool.
 
-You can perform a reverse DNS lookup for a single IP address or a list of IPs from a file.
-
 Usage examples:
   netdbg revdns -a <ip> -p <port> -r <resolver_ip> -P <udp|tcp>
   netdbg revdns -f <file_with_ips> -p <port> -r <resolver_ip> -P <udp|tcp>
-
-You must specify the address using the -a or --address flag, or provide a file with the -f or --file flag.
 `,
 	PreRun: func(cmd *cobra.Command, args []string) {
 		addr, _ := cmd.Flags().GetString("address")
@@ -30,14 +26,38 @@ You must specify the address using the -a or --address flag, or provide a file w
 		if addr == "" && file == "" {
 			err := cmd.Help()
 			if err != nil {
-				logger.Error("can not execute help command", "err", err)
+				logger.Error("failed to execute help command", "err", err)
 			}
 			fmt.Fprintln(os.Stderr, "Error: you must specify either the address with -a/--address or a file with -f/--file.")
 			os.Exit(1)
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		revdns.ExecuteCommand(cmd, args)
+		opts, results := revdns.ExecuteCommand(cmd, args)
+		for result := range results {
+			if result.Error != nil {
+				message := "reverse DNS lookup failed"
+				hint := "check resolver or DNS connectivity"
+				if result.IP == "" {
+					message = "failed to read input"
+					hint = "check the file or address"
+				} else {
+					message = fmt.Sprintf("reverse DNS lookup failed (ip: %s)", result.IP)
+				}
+				WriteError(os.Stderr, ErrorOutput{
+					Command: "revdns",
+					Message: message,
+					Cause:   result.Error,
+					Hint:    hint,
+				})
+				continue
+			}
+			if opts.DomainOnly {
+				fmt.Fprintln(os.Stdout, result.Domain)
+			} else {
+				fmt.Fprintf(os.Stdout, "%s\t%s\n", result.IP, result.Domain)
+			}
+		}
 	},
 }
 

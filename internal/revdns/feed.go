@@ -15,7 +15,7 @@ func feedFromFile(filePath string, work chan<- string) error {
 	}
 	defer func() {
 		if cerr := file.Close(); cerr != nil {
-			slog.Error("can not close file", "err", cerr)
+			slog.Error("failed to close file", "err", cerr)
 		}
 	}()
 	scanner := bufio.NewScanner(file)

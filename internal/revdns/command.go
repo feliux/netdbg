@@ -2,14 +2,12 @@ package revdns
 
 import (
 	"context"
-	"fmt"
-	"os"
 
-	"github.com/feliux/netdbg/internal/logger"
 	"github.com/spf13/cobra"
 )
 
-func ExecuteCommand(cmd *cobra.Command, args []string) {
+// ExecuteCommand builds options from flags and starts reverse DNS execution.
+func ExecuteCommand(cmd *cobra.Command, args []string) (*Options, <-chan Result) {
 	addr, _ := cmd.Flags().GetString("address")
 	resolverIP, _ := cmd.Flags().GetString("resolver")
 	protocol, _ := cmd.Flags().GetString("protocol")
@@ -30,16 +28,7 @@ func ExecuteCommand(cmd *cobra.Command, args []string) {
 
 	executor := &DefaultExecutor{}
 	ctx := context.Background()
-	for result := range executor.Execute(ctx, opts) {
-		if result.Error != nil {
-			logger.Error("reverse DNS lookup error", "ip", result.IP, "err", result.Error)
-			fmt.Fprintf(os.Stderr, "error: %v\n", result.Error)
-			continue
-		}
-		if opts.DomainOnly {
-			fmt.Println(result.Domain)
-		} else {
-			fmt.Printf("%s\t%s\n", result.IP, result.Domain)
-		}
-	}
+	results := executor.Execute(ctx, opts)
+
+	return opts, results
 }

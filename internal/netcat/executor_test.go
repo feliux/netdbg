@@ -10,7 +10,7 @@ import (
 	"time"
 )
 
-// getFreePort find a free TCP port for testing listen/connect
+// getFreePort finds a free TCP port for listen/connect tests.
 func getFreePort(t *testing.T) int {
 	l, err := net.Listen("tcp", "127.0.0.1:0")
 	if err != nil {
@@ -20,6 +20,7 @@ func getFreePort(t *testing.T) int {
 	return l.Addr().(*net.TCPAddr).Port
 }
 
+// TestDefaultExecutor_Connect_Success verifies a successful client connection.
 func TestDefaultExecutor_Connect_Success(t *testing.T) {
 	setupLogger()
 	port := getFreePort(t)
@@ -59,6 +60,7 @@ func TestDefaultExecutor_Connect_Success(t *testing.T) {
 	<-done
 }
 
+// TestDefaultExecutor_Connect_Fail verifies connection failures are reported.
 func TestDefaultExecutor_Connect_Fail(t *testing.T) {
 	setupLogger()
 	// Use a port unlikely to be open
@@ -80,6 +82,7 @@ func TestDefaultExecutor_Connect_Fail(t *testing.T) {
 	}
 }
 
+// TestDefaultExecutor_ListenAndConnect verifies listen and connect behavior.
 func TestDefaultExecutor_ListenAndConnect(t *testing.T) {
 	setupLogger()
 	port := getFreePort(t)
@@ -136,6 +139,7 @@ func TestDefaultExecutor_ListenAndConnect(t *testing.T) {
 	<-done
 }
 
+// itoa converts an integer to a string.
 func itoa(i int) string {
 	return fmt.Sprintf("%d", i)
 }

@@ -3,6 +3,8 @@ package revdns
 import (
 	"context"
 	"sync"
+
+	"github.com/feliux/netdbg/internal/logger"
 )
 
 // Executor defines the interface for executing reverse DNS lookups.
@@ -19,6 +21,16 @@ func (e *DefaultExecutor) Execute(ctx context.Context, opts *Options) <-chan Res
 	work := make(chan string)
 	var wg sync.WaitGroup
 
+	source := "address"
+	if opts.File != "" {
+		source = "file"
+	}
+	resolver := opts.ResolverIP
+	if resolver == "" {
+		resolver = "system"
+	}
+	logger.Info("starting reverse DNS resolution", "source", source, "threads", opts.Threads, "resolver", resolver, "protocol", opts.Protocol, "port", opts.Port, "domain_only", opts.DomainOnly)
+
 	// Start workers
 	for i := 0; i < opts.Threads; i++ {
 		wg.Add(1)
@@ -32,10 +44,12 @@ func (e *DefaultExecutor) Execute(ctx context.Context, opts *Options) <-chan Res
 	go func() {
 		defer close(work)
 		if opts.File != "" {
+			logger.Info("loading IP addresses from file", "file", opts.File)
 			if err := feedFromFile(opts.File, work); err != nil {
 				results <- Result{Error: err}
 			}
 		} else if opts.Addr != "" {
+			logger.Info("looking up IP address", "ip", opts.Addr)
 			work <- opts.Addr
 		}
 	}()

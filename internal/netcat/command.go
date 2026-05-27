@@ -2,14 +2,13 @@ package netcat
 
 import (
 	"context"
-	"fmt"
 	"time"
 
-	"github.com/feliux/netdbg/internal/logger"
 	"github.com/spf13/cobra"
 )
 
-func ExecuteCommand(cmd *cobra.Command, args []string) {
+// ExecuteCommand builds options from flags and runs the netcat executor.
+func ExecuteCommand(cmd *cobra.Command, args []string) Result {
 	listen, _ := cmd.Flags().GetBool("listen")
 	address, _ := cmd.Flags().GetString("address")
 	port, _ := cmd.Flags().GetInt("port")
@@ -30,14 +29,5 @@ func ExecuteCommand(cmd *cobra.Command, args []string) {
 	executor := &DefaultExecutor{}
 	result := executor.Execute(context.Background(), opts)
 
-	if result.Error != nil {
-		if listen {
-			logger.Error("error starting server", "err", result.Error)
-		} else {
-			logger.Error("error connecting to server", "err", result.Error)
-		}
-		fmt.Println(result.Error)
-	} else {
-		fmt.Println(result.Message)
-	}
+	return result
 }

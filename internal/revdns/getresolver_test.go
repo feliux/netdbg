@@ -5,6 +5,7 @@ import (
 	"testing"
 )
 
+// TestGetResolver_Default verifies the default resolver behavior.
 func TestGetResolver_Default(t *testing.T) {
 	opts := &Options{}
 	res := getResolver(opts)
@@ -20,6 +21,7 @@ func TestGetResolver_Default(t *testing.T) {
 	}
 }
 
+// TestGetResolver_Custom verifies the custom resolver behavior.
 func TestGetResolver_Custom(t *testing.T) {
 	opts := &Options{
 		ResolverIP: "8.8.8.8",

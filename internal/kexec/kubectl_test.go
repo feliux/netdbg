@@ -5,6 +5,7 @@ import (
 	"testing"
 )
 
+// TestKubectlCp_DryRun verifies dry-run behavior for kubectl cp.
 func TestKubectlCp_DryRun(t *testing.T) {
 	err := KubectlCp("default", "mypod", "", "/tmp/netdbg", "/tmp/netdbg", true)
 	if err != nil {
@@ -12,6 +13,7 @@ func TestKubectlCp_DryRun(t *testing.T) {
 	}
 }
 
+// TestKubectlCp_Success verifies a successful kubectl cp execution.
 func TestKubectlCp_Success(t *testing.T) {
 	oldCmd := kubectlCommand
 	kubectlCommand = func(name string, arg ...string) *exec.Cmd {
@@ -24,6 +26,7 @@ func TestKubectlCp_Success(t *testing.T) {
 	}
 }
 
+// TestKubectlCp_Error verifies kubectl cp errors are reported.
 func TestKubectlCp_Error(t *testing.T) {
 	oldCmd := kubectlCommand
 	kubectlCommand = func(name string, arg ...string) *exec.Cmd {
@@ -38,6 +41,7 @@ func TestKubectlCp_Error(t *testing.T) {
 
 // --- KubectlChmod ---
 
+// TestKubectlChmod_DryRun verifies dry-run behavior for kubectl chmod.
 func TestKubectlChmod_DryRun(t *testing.T) {
 	err := KubectlChmod("default", "mypod", "", "/tmp/netdbg", true)
 	if err != nil {
@@ -45,6 +49,7 @@ func TestKubectlChmod_DryRun(t *testing.T) {
 	}
 }
 
+// TestKubectlChmod_Success verifies a successful kubectl chmod execution.
 func TestKubectlChmod_Success(t *testing.T) {
 	oldCmd := kubectlCommand
 	kubectlCommand = func(name string, arg ...string) *exec.Cmd {
@@ -57,6 +62,7 @@ func TestKubectlChmod_Success(t *testing.T) {
 	}
 }
 
+// TestKubectlChmod_Error verifies kubectl chmod errors are reported.
 func TestKubectlChmod_Error(t *testing.T) {
 	oldCmd := kubectlCommand
 	kubectlCommand = func(name string, arg ...string) *exec.Cmd {
@@ -71,6 +77,7 @@ func TestKubectlChmod_Error(t *testing.T) {
 
 // --- KubectlExec ---
 
+// TestKubectlExec_DryRun verifies dry-run behavior for kubectl exec.
 func TestKubectlExec_DryRun(t *testing.T) {
 	err := KubectlExec("default", "mypod", "", "/tmp/netdbg", []string{"nc", "-a", "8.8.8.8"}, true)
 	if err != nil {
@@ -78,6 +85,7 @@ func TestKubectlExec_DryRun(t *testing.T) {
 	}
 }
 
+// TestKubectlExec_Success verifies a successful kubectl exec execution.
 func TestKubectlExec_Success(t *testing.T) {
 	oldCmd := kubectlCommand
 	kubectlCommand = func(name string, arg ...string) *exec.Cmd {
@@ -90,6 +98,7 @@ func TestKubectlExec_Success(t *testing.T) {
 	}
 }
 
+// TestKubectlExec_Error verifies kubectl exec errors are reported.
 func TestKubectlExec_Error(t *testing.T) {
 	oldCmd := kubectlCommand
 	kubectlCommand = func(name string, arg ...string) *exec.Cmd {
@@ -104,6 +113,7 @@ func TestKubectlExec_Error(t *testing.T) {
 
 // --- KubectlCleanup ---
 
+// TestKubectlCleanup_DryRun verifies dry-run behavior for kubectl cleanup.
 func TestKubectlCleanup_DryRun(t *testing.T) {
 	err := KubectlCleanup("default", "mypod", "", "/tmp/netdbg", true)
 	if err != nil {
@@ -111,6 +121,7 @@ func TestKubectlCleanup_DryRun(t *testing.T) {
 	}
 }
 
+// TestKubectlCleanup_Success verifies a successful kubectl cleanup execution.
 func TestKubectlCleanup_Success(t *testing.T) {
 	oldCmd := kubectlCommand
 	kubectlCommand = func(name string, arg ...string) *exec.Cmd {
@@ -123,6 +134,7 @@ func TestKubectlCleanup_Success(t *testing.T) {
 	}
 }
 
+// TestKubectlCleanup_Error verifies kubectl cleanup errors are reported.
 func TestKubectlCleanup_Error(t *testing.T) {
 	oldCmd := kubectlCommand
 	kubectlCommand = func(name string, arg ...string) *exec.Cmd {

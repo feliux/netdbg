@@ -7,12 +7,13 @@ import (
 	"testing"
 )
 
+// TestLoggerInitialization verifies logger output is written as expected.
 func TestLoggerInitialization(t *testing.T) {
 	var buf bytes.Buffer
 
 	// Create a new handler with the output redirected to the buffer.
 	handler := slog.NewTextHandler(&buf, &slog.HandlerOptions{Level: slog.LevelInfo})
-	logger = slog.New(handler) // Sobrescribir el logger global para pruebas
+	logger = slog.New(handler) // Override the global logger for tests
 
 	logger.Info("Test message", "key", "value")
 
@@ -21,6 +22,7 @@ func TestLoggerInitialization(t *testing.T) {
 	}
 }
 
+// TestSingletonLogger verifies the logger behaves as a singleton.
 func TestSingletonLogger(t *testing.T) {
 	InitLogger(slog.LevelInfo, os.Stdout, "text")
 	logger1 := GetLogger()

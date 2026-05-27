@@ -6,8 +6,10 @@ import (
 	"strings"
 )
 
-// Inyectables para test
+// lookPath is injectable for tests.
 var lookPath = exec.LookPath
+
+// command is injectable for tests.
 var command = exec.Command
 
 // CheckKubectlAvailable verifies that the 'kubectl' command is available in the system PATH.

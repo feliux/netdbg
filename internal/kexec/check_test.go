@@ -8,6 +8,7 @@ import (
 
 // --- CheckKubectlAvailable ---
 
+// TestCheckKubectlAvailable_Success verifies success when kubectl is available.
 func TestCheckKubectlAvailable_Success(t *testing.T) {
 	setupLogger()
 	oldLookPath := lookPath
@@ -18,6 +19,7 @@ func TestCheckKubectlAvailable_Success(t *testing.T) {
 	}
 }
 
+// TestCheckKubectlAvailable_Error verifies failure when kubectl is missing.
 func TestCheckKubectlAvailable_Error(t *testing.T) {
 	setupLogger()
 	oldLookPath := lookPath
@@ -30,6 +32,7 @@ func TestCheckKubectlAvailable_Error(t *testing.T) {
 
 // --- CheckKubeCluster ---
 
+// TestCheckKubeCluster_Success verifies cluster connectivity succeeds.
 func TestCheckKubeCluster_Success(t *testing.T) {
 	setupLogger()
 	oldCommand := command
@@ -42,6 +45,7 @@ func TestCheckKubeCluster_Success(t *testing.T) {
 	}
 }
 
+// TestCheckKubeCluster_Error verifies cluster connectivity failures.
 func TestCheckKubeCluster_Error(t *testing.T) {
 	setupLogger()
 	oldCommand := command
@@ -56,6 +60,7 @@ func TestCheckKubeCluster_Error(t *testing.T) {
 
 // --- CheckPodRunning ---
 
+// TestCheckPodRunning_Success verifies running pods are accepted.
 func TestCheckPodRunning_Success(t *testing.T) {
 	setupLogger()
 	oldCommand := command
@@ -68,6 +73,7 @@ func TestCheckPodRunning_Success(t *testing.T) {
 	}
 }
 
+// TestCheckPodRunning_NotRunning verifies non-running pods are rejected.
 func TestCheckPodRunning_NotRunning(t *testing.T) {
 	setupLogger()
 	oldCommand := command
@@ -80,6 +86,7 @@ func TestCheckPodRunning_NotRunning(t *testing.T) {
 	}
 }
 
+// TestCheckPodRunning_Error verifies errors when pod status cannot be read.
 func TestCheckPodRunning_Error(t *testing.T) {
 	setupLogger()
 	oldCommand := command
@@ -94,6 +101,7 @@ func TestCheckPodRunning_Error(t *testing.T) {
 
 // --- CheckExecPermission ---
 
+// TestCheckExecPermission_Success verifies exec permission checks pass.
 func TestCheckExecPermission_Success(t *testing.T) {
 	setupLogger()
 	oldCommand := command
@@ -106,6 +114,7 @@ func TestCheckExecPermission_Success(t *testing.T) {
 	}
 }
 
+// TestCheckExecPermission_Error verifies exec permission checks fail.
 func TestCheckExecPermission_Error(t *testing.T) {
 	setupLogger()
 	oldCommand := command
@@ -120,6 +129,7 @@ func TestCheckExecPermission_Error(t *testing.T) {
 
 // --- CheckWritable ---
 
+// TestCheckWritable_Success verifies write permission checks pass.
 func TestCheckWritable_Success(t *testing.T) {
 	setupLogger()
 	oldCommand := command
@@ -132,6 +142,7 @@ func TestCheckWritable_Success(t *testing.T) {
 	}
 }
 
+// TestCheckWritable_Error verifies write permission checks fail.
 func TestCheckWritable_Error(t *testing.T) {
 	setupLogger()
 	oldCommand := command
@@ -146,6 +157,7 @@ func TestCheckWritable_Error(t *testing.T) {
 
 // --- CheckBinNotExists ---
 
+// TestCheckBinNotExists_Success verifies absence of a binary is accepted.
 func TestCheckBinNotExists_Success(t *testing.T) {
 	setupLogger()
 	oldCommand := command
@@ -158,6 +170,7 @@ func TestCheckBinNotExists_Success(t *testing.T) {
 	}
 }
 
+// TestCheckBinNotExists_Error verifies existing binaries are detected.
 func TestCheckBinNotExists_Error(t *testing.T) {
 	setupLogger()
 	oldCommand := command
@@ -172,6 +185,7 @@ func TestCheckBinNotExists_Error(t *testing.T) {
 
 // --- CheckGoAvailable ---
 
+// TestCheckGoAvailable_Success verifies Go availability checks pass.
 func TestCheckGoAvailable_Success(t *testing.T) {
 	setupLogger()
 	oldLookPath := lookPath
@@ -182,6 +196,7 @@ func TestCheckGoAvailable_Success(t *testing.T) {
 	}
 }
 
+// TestCheckGoAvailable_Error verifies Go availability checks fail.
 func TestCheckGoAvailable_Error(t *testing.T) {
 	setupLogger()
 	oldLookPath := lookPath
@@ -194,6 +209,7 @@ func TestCheckGoAvailable_Error(t *testing.T) {
 
 // --- GetPodArchOS ---
 
+// TestGetPodArchOS_Success verifies pod architecture/OS detection succeeds.
 func TestGetPodArchOS_Success(t *testing.T) {
 	setupLogger()
 	oldCommand := command
@@ -216,6 +232,7 @@ func TestGetPodArchOS_Success(t *testing.T) {
 	}
 }
 
+// TestGetPodArchOS_Error verifies pod architecture/OS detection failures.
 func TestGetPodArchOS_Error(t *testing.T) {
 	setupLogger()
 	oldCommand := command
