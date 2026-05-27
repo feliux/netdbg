@@ -14,18 +14,18 @@ var buildCommand = exec.Command
 // BuildNetdbgBinary compiles netdbg for the specified OS/ARCH and outputs to localBin.
 func BuildNetdbgBinary(goos, goarch, localBin string, dryRun bool) error {
 	if dryRun {
-		logger.Info("[DRY-RUN] Would build netdbg binary", "goos", goos, "goarch", goarch, "output", localBin)
+		logger.Debug("[dry-run] would build netdbg binary", "goos", goos, "goarch", goarch, "output", localBin)
 		return nil
 	}
-	logger.Info("Building netdbg binary", "goos", goos, "goarch", goarch, "output", localBin)
+	logger.Debug("building netdbg binary", "goos", goos, "goarch", goarch, "output", localBin)
 	cmd := buildCommand("go", "build", "-o", localBin, ".")
 	cmd.Env = append(os.Environ(), "GOOS="+goos, "GOARCH="+goarch)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	if err := cmd.Run(); err != nil {
-		logger.Error("Failed to build netdbg binary", "error", err)
+		logger.Debug("failed to build netdbg binary", "error", err)
 		return fmt.Errorf("failed to build netdbg binary: %w", err)
 	}
-	logger.Info("Successfully built netdbg binary", "output", localBin)
+	logger.Debug("successfully built netdbg binary", "output", localBin)
 	return nil
 }

@@ -9,6 +9,7 @@ import (
 	"time"
 )
 
+// TestDefaultExecutor_Execute_Success verifies successful reverse DNS execution.
 func TestDefaultExecutor_Execute_Success(t *testing.T) {
 	setupLogger()
 	opts := &Options{
@@ -38,6 +39,7 @@ func TestDefaultExecutor_Execute_Success(t *testing.T) {
 	}
 }
 
+// TestDefaultExecutor_Execute_Fail verifies failures for unresolvable IPs.
 func TestDefaultExecutor_Execute_Fail(t *testing.T) {
 	setupLogger()
 	opts := &Options{
@@ -60,6 +62,7 @@ func TestDefaultExecutor_Execute_Fail(t *testing.T) {
 	}
 }
 
+// TestDefaultExecutor_Execute_DomainOnly verifies domain-only output behavior.
 func TestDefaultExecutor_Execute_DomainOnly(t *testing.T) {
 	setupLogger()
 	opts := &Options{
@@ -83,6 +86,7 @@ func TestDefaultExecutor_Execute_DomainOnly(t *testing.T) {
 	}
 }
 
+// TestDefaultExecutor_Execute_FromFile verifies file-driven reverse DNS execution.
 func TestDefaultExecutor_Execute_FromFile(t *testing.T) {
 	setupLogger()
 	// Prepare a temporary file with two IPs: one resolvable, one not

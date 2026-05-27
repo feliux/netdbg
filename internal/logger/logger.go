@@ -6,6 +6,8 @@ import (
 	"sync"
 )
 
+// once ensures the logger is initialized only once.
+// logger holds the singleton logger instance.
 var (
 	once   sync.Once
 	logger *slog.Logger
@@ -19,9 +21,9 @@ func InitLogger(level slog.Level, output io.Writer, format string) {
 
 		// Choose the handler based on the format
 		switch format {
-		case "json":
+		case FormatJSON:
 			handler = slog.NewJSONHandler(output, &slog.HandlerOptions{Level: level})
-		case "text":
+		case FormatText:
 			handler = slog.NewTextHandler(output, &slog.HandlerOptions{Level: level})
 		default:
 			panic("unsupported log format: " + format)

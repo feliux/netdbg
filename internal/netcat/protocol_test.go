@@ -10,6 +10,7 @@ import (
 	"time"
 )
 
+// TestTCPConnector_Connect verifies TCP client connections.
 func TestTCPConnector_Connect(t *testing.T) {
 	setupLogger()
 	// Start a mock TCP server
@@ -60,6 +61,7 @@ func TestTCPConnector_Connect(t *testing.T) {
 	}
 }
 
+// TestTCPConnector_Listen verifies TCP listener behavior.
 func TestTCPConnector_Listen(t *testing.T) {
 	setupLogger()
 	// Start the TCPConnector's Listen method in a goroutine
@@ -102,6 +104,7 @@ func TestTCPConnector_Listen(t *testing.T) {
 	}
 }
 
+// TestUDPConnector_Connect verifies UDP client connections.
 func TestUDPConnector_Connect(t *testing.T) {
 	// Start a mock UDP server
 	address := "127.0.0.1"
@@ -169,6 +172,7 @@ func TestUDPConnector_Connect(t *testing.T) {
 	setupLogger()
 }
 
+// TestUDPConnector_Listen verifies UDP listener behavior.
 func TestUDPConnector_Listen(t *testing.T) {
 	setupLogger()
 	// Start the UDPConnector's Listen method in a goroutine

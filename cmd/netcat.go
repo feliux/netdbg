@@ -14,27 +14,39 @@ var netcatCmd = &cobra.Command{
 	Short: "Minimal netcat tool",
 	Long: `Minimal netcat tool.
 
-You can connect to a remote host or listen for inbound connections.
-
 Usage examples:
   netdbg nc -a <address> -p <port>
   netdbg nc --listen -a <address> -p <port>
-
-You must specify the destination address using the -a or --address flag.
 `,
 	PreRun: func(cmd *cobra.Command, args []string) {
 		address, _ := cmd.Flags().GetString("address")
 		if address == "" {
 			err := cmd.Help()
 			if err != nil {
-				logger.Error("can not execute help command", "err", err)
+				logger.Error("failed to execute help command", "err", err)
 			}
 			fmt.Fprintln(os.Stderr, "Error: you must specify the destination address using the -a or --address flag.")
 			os.Exit(1)
 		}
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		netcat.ExecuteCommand(cmd, args)
+		result := netcat.ExecuteCommand(cmd, args)
+		if result.Error != nil {
+			message := "unable to connect"
+			hint := "check host, port, or connectivity"
+			if result.ListenMode {
+				message = "unable to start server"
+				hint = "use another port or check permissions"
+			}
+			WriteError(os.Stderr, ErrorOutput{
+				Command: "nc",
+				Message: message,
+				Cause:   result.Error,
+				Hint:    hint,
+			})
+			return
+		}
+		fmt.Fprintln(os.Stdout, result.Message)
 	},
 }
 

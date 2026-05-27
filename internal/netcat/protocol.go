@@ -24,6 +24,7 @@ type TCPConnector struct{}
 // Connect establishes a TCP connection to the server.
 func (c *TCPConnector) Connect(address string, port int, zero bool) error {
 	hostPort := net.JoinHostPort(address, strconv.Itoa(port))
+	logger.Info("connecting to remote endpoint", "protocol", "tcp", "address", address, "port", port)
 	conn, err := net.Dial("tcp", hostPort)
 	if err != nil {
 		return err
@@ -31,48 +32,48 @@ func (c *TCPConnector) Connect(address string, port int, zero bool) error {
 	defer func() {
 		err := conn.Close()
 		if err != nil {
-			logger.Error("failed to close connection", "error", err)
+			logger.Debug("failed to close network connection", "error", err)
 		}
 	}()
 
 	if zero {
-		logger.Info("zero mode invoked. Connection established.", "protocol", "tcp", "address", address, "port", port)
+		logger.Debug("zero-I/O mode: connection established", "protocol", "tcp", "address", address, "port", port)
 		return nil
 	}
 
-	logger.Info("connection established", "protocol", "tcp", "address", address, "port", port)
+	logger.Debug("connection established to remote endpoint", "protocol", "tcp", "address", address, "port", port)
 	_, err = io.Copy(conn, os.Stdin)
 	if err != nil {
-		logger.Error("connection error", "protocol", "tcp", "address", address, "port", "error", err)
+		logger.Debug("connection error while sending data", "protocol", "tcp", "address", address, "port", "error", err)
 		return fmt.Errorf("connection error: %w", err)
 	}
 
-	logger.Info("connection closed successfully", "protocol", "tcp", "address", address, "port", port)
+	logger.Debug("connection closed cleanly", "protocol", "tcp", "address", address, "port", port)
 	return nil
 }
 
 // Listen starts a TCP server to listen for incoming connections, and supports context cancellation.
 func (c *TCPConnector) Listen(ctx context.Context, address string, port int) error {
 	hostPort := net.JoinHostPort(address, strconv.Itoa(port))
-	logger.Info("starting TCP server", "address", address, "port", port)
+	logger.Info("starting TCP listener", "address", address, "port", port)
 
 	listener, err := net.Listen("tcp", hostPort)
 	if err != nil {
-		logger.Error("failed to start TCP server", "address", address, "port", port, "error", err)
+		logger.Debug("failed to start TCP listener", "address", address, "port", port, "error", err)
 		return err
 	}
 	defer func() {
 		err := listener.Close()
 		if err != nil {
-			logger.Error("failed to close listener", "error", err)
+			logger.Debug("failed to close TCP listener", "error", err)
 		}
 	}()
 
-	logger.Info("tcp server listening", "address", listener.Addr().String())
+	logger.Info("TCP listener active", "address", listener.Addr().String())
 	for {
 		select {
 		case <-ctx.Done():
-			logger.Info("listener context cancelled, shutting down")
+			logger.Debug("listener context canceled, shutting down")
 			return nil
 		default:
 			// Only set deadline if listener is a *net.TCPListener
@@ -84,10 +85,10 @@ func (c *TCPConnector) Listen(ctx context.Context, address string, port int) err
 				if ne, ok := err.(net.Error); ok && ne.Timeout() {
 					continue // check context again
 				}
-				logger.Error("error accepting connection", "error", err)
+				logger.Debug("failed to accept connection", "error", err)
 				continue
 			}
-			logger.Info("accepted connection", "remote_address", conn.RemoteAddr().String())
+			logger.Debug("accepted client connection", "remote_address", conn.RemoteAddr().String())
 			go processClient(conn)
 		}
 	}
@@ -99,31 +100,32 @@ type UDPConnector struct{}
 // Connect establishes a UDP connection to the server.
 func (c *UDPConnector) Connect(address string, port int, zero bool) error {
 	hostPort := net.JoinHostPort(address, strconv.Itoa(port))
+	logger.Info("connecting to remote endpoint", "protocol", "udp", "address", address, "port", port)
 	conn, err := net.Dial("udp", hostPort)
 	if err != nil {
-		logger.Error("failed to connect", "protocol", "udp", "address", address, "port", "error", err)
+		logger.Debug("failed to connect to remote endpoint", "protocol", "udp", "address", address, "port", "error", err)
 		return err
 	}
 	defer func() {
 		err := conn.Close()
 		if err != nil {
-			logger.Error("failed to close connection", "error", err)
+			logger.Debug("failed to close network connection", "error", err)
 		}
 	}()
 
 	if zero {
-		logger.Info("zero mode invoked. Connection established.", "protocol", "udp", "address", address, "port", port)
+		logger.Debug("zero-I/O mode: connection established", "protocol", "udp", "address", address, "port", port)
 		return nil
 	}
 
-	logger.Info("connection established", "protocol", "udp", "address", address, "port", port)
+	logger.Debug("connection established to remote endpoint", "protocol", "udp", "address", address, "port", port)
 	_, err = io.Copy(conn, os.Stdin)
 	if err != nil {
-		logger.Error("connection error", "protocol", "udp", "address", address, "port", "error", err)
+		logger.Debug("connection error while sending data", "protocol", "udp", "address", address, "port", "error", err)
 		return fmt.Errorf("connection error: %w", err)
 	}
 
-	logger.Info("connection closed successfully", "protocol", "udp", "address", address, "port", port)
+	logger.Debug("connection closed cleanly", "protocol", "udp", "address", address, "port", port)
 	return nil
 }
 
@@ -148,14 +150,14 @@ func processClient(conn net.Conn) {
 	defer func() {
 		err := conn.Close()
 		if err != nil {
-			logger.Error("failed to close client connection", "error", err)
+			logger.Debug("failed to close client connection cleanly", "error", err)
 		}
 	}()
 
-	logger.Info("processing client data", "remote_address", conn.RemoteAddr().String())
+	logger.Debug("processing client data stream", "remote_address", conn.RemoteAddr().String())
 	_, err := io.Copy(os.Stdout, conn)
 	if err != nil {
-		logger.Error("error processing client data", "remote_address", conn.RemoteAddr().String(), "error", err)
+		logger.Debug("error processing client data stream", "remote_address", conn.RemoteAddr().String(), "error", err)
 	}
-	logger.Info("finished processing client data", "remote_address", conn.RemoteAddr().String())
+	logger.Debug("finished processing client data stream", "remote_address", conn.RemoteAddr().String())
 }

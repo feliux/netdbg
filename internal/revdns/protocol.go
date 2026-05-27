@@ -7,6 +7,7 @@ import (
 	"strings"
 )
 
+// worker processes IPs from the work channel and emits results.
 func (e *DefaultExecutor) worker(ctx context.Context, opts *Options, work <-chan string, results chan<- Result) {
 	resolver := getResolver(opts)
 	for ip := range work {
@@ -26,6 +27,7 @@ func (e *DefaultExecutor) worker(ctx context.Context, opts *Options, work <-chan
 	}
 }
 
+// getResolver returns a resolver based on options or the system default.
 func getResolver(opts *Options) *net.Resolver {
 	if opts.ResolverIP != "" {
 		return &net.Resolver{

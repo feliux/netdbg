@@ -9,13 +9,15 @@ import (
 	"testing"
 )
 
-// mockReadCloser implements io.ReadCloser for testing
+// mockReadCloser implements io.ReadCloser for testing.
 type mockReadCloser struct {
 	io.Reader
 }
 
+// Close implements io.Closer.
 func (m *mockReadCloser) Close() error { return nil }
 
+// TestDownloadNetdbgBinary_DryRun verifies dry-run behavior.
 func TestDownloadNetdbgBinary_DryRun(t *testing.T) {
 	setupLogger()
 	oldHttpGet := httpGet
@@ -26,6 +28,7 @@ func TestDownloadNetdbgBinary_DryRun(t *testing.T) {
 	}
 }
 
+// TestDownloadNetdbgBinary_Success verifies successful downloads.
 func TestDownloadNetdbgBinary_Success(t *testing.T) {
 	setupLogger()
 	oldHttpGet := httpGet
@@ -61,6 +64,7 @@ func TestDownloadNetdbgBinary_Success(t *testing.T) {
 	}
 }
 
+// TestDownloadNetdbgBinary_HttpError verifies HTTP failures are handled.
 func TestDownloadNetdbgBinary_HttpError(t *testing.T) {
 	setupLogger()
 	oldHttpGet := httpGet
@@ -74,6 +78,7 @@ func TestDownloadNetdbgBinary_HttpError(t *testing.T) {
 	}
 }
 
+// TestDownloadNetdbgBinary_CreateFileError verifies file creation failures are handled.
 func TestDownloadNetdbgBinary_CreateFileError(t *testing.T) {
 	setupLogger()
 	oldHttpGet := httpGet
@@ -92,6 +97,7 @@ func TestDownloadNetdbgBinary_CreateFileError(t *testing.T) {
 	}
 }
 
+// TestDownloadNetdbgBinary_CopyError verifies copy failures are handled.
 func TestDownloadNetdbgBinary_CopyError(t *testing.T) {
 	setupLogger()
 	oldHttpGet := httpGet
@@ -116,9 +122,10 @@ func TestDownloadNetdbgBinary_CopyError(t *testing.T) {
 	}
 }
 
-// errorReader implements io.Reader and always returns an error
+// errorReader implements io.Reader and always returns an error.
 type errorReader struct{}
 
+// Read always returns an error.
 func (e errorReader) Read(p []byte) (int, error) {
 	return 0, errors.New("read error")
 }

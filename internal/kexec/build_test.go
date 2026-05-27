@@ -94,9 +94,9 @@ func TestBuildNetdbgBinary_ErrorPropagation(t *testing.T) {
 	}
 }
 
-// TestBuildNetdbgBinary_LoggerCoverage ensures logger.Info and logger.Error are called (manual/visual).
+// TestBuildNetdbgBinary_LoggerCoverage ensures logger.Debug is called (manual/visual).
 func TestBuildNetdbgBinary_LoggerCoverage(t *testing.T) {
 	setupLogger()
-	// This test is mainly for coverage; check that logger.Info/Error do not panic.
+	// This test is mainly for coverage; check that logger.Debug does not panic.
 	_ = BuildNetdbgBinary("linux", "amd64", "/tmp/netdbg", true)
 }
