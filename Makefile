@@ -23,6 +23,13 @@ author:
 	@echo "	Project by feliux"
 	@echo "	https://github.com/feliux"
 
+copy-hooks:
+	chmod +x scripts/hooks/pre-commit
+	cp -r scripts/hooks/* .git/hooks/
+
+install-lint:
+	curl -sSfL https://golangci-lint.run/install.sh | sh -s -- -b $$(go env GOPATH)/bin v2.12.2
+
 setup: install-lint copy-hooks
 
 lint:
@@ -40,20 +47,15 @@ test: lint
 check-format:
 	test -z $$(go fmt ./...) # check fmt command to see if there were any changes. If so, it returns a failing value
 
-install-lint:
-	curl -sSfL https://golangci-lint.run/install.sh | sh -s -- -b $$(go env GOPATH)/bin v2.12.2
-
 static-check:
 	golangci-lint run --issues-exit-code 0
 
-build: lint test check-format static-check
+ci: lint test check-format static-check
+
+build:
 	GOARCH=arm64 GOOS=darwin go build $(GO_LDFLAGS) -o $(BIN_FOLDER)/${BIN_NAME}-darwin main.go
 	GOARCH=amd64 GOOS=linux go build $(GO_LDFLAGS) -o $(BIN_FOLDER)/${BIN_NAME} main.go
 	GOARCH=amd64 GOOS=windows go build $(GO_LDFLAGS) -o $(BIN_FOLDER)/${BIN_NAME}-windows main.go
-
-copy-hooks:
-	chmod +x scripts/hooks/pre-commit
-	cp -r scripts/hooks/* .git/hooks/
 
 clean:
 	rm -f $(BIN_FOLDER)*
